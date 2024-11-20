@@ -4,6 +4,7 @@ from sqlmodel import Session
 from src.courses.services import CourseService
 from src.courses.models import CourseCreate, CourseUpdate
 from src.database import get_db
+from src.utils.jwt_token_operations import jwt_required
 
 
 
@@ -12,7 +13,7 @@ router= APIRouter()
 
 
 
-@router.post("/new")
+@router.post("/new",dependencies=[Depends(jwt_required)])
 def create_course(course_data: CourseCreate,db:Session= Depends(get_db)):
     service= CourseService(db)
     return service.create_course(course_data)
