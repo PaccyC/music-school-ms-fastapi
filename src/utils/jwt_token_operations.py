@@ -54,3 +54,25 @@ def get_current_user(token: str = Depends(oath2_scheme),db: Session = Depends(ge
     user= db.query(User).filter(User.id == token.id).first()
     
     return user
+
+
+
+
+async def jwt_required(token: str = Depends(oath2_scheme)):
+    credentials_exception= HTTPException(
+        status_code= status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate":"Bearer"}
+    )
+    
+    try:
+        payload= jwt.decode(token,SECRET_KEY,ALGORITHM)
+        
+        email: str = payload.get("email")
+        if email is None:
+            raise credentials_exception
+        
+    except JWTError:
+        raise credentials_exception
+    
+        
