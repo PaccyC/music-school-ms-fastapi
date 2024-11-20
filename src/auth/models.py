@@ -16,9 +16,13 @@ class UserBase(SQLModel):
     first_name: str = None
     last_name: str = None
     email: str = None
+    password: str = None
     role: RoleEnum  # Use the Enum here
     phoneNumber: str = None
 
 class User(UserBase, table=True):
     __tablename__ = "users"
     id: Optional[int] = Field(primary_key=True, nullable=False, default=None)
+
+class UserCreate(UserBase):
+    pass
