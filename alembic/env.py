@@ -6,6 +6,7 @@ from sqlmodel import SQLModel
 from alembic import context
 from src.config import settings
 from src.auth.models import User,Token,DataToken
+from src.courses.models import Course
 
 
 # this is the Alembic Config object, which provides

@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
 from typing import Optional
 from enum import Enum
 from typing import ClassVar
@@ -23,7 +23,7 @@ class UserBase(SQLModel):
 class User(UserBase, table=True):
     __tablename__ = "users"
     id: Optional[int] = Field(primary_key=True, nullable=False, default=None)
-
+    
 class UserCreate(UserBase):
     pass
 
