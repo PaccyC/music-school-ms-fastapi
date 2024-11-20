@@ -83,7 +83,7 @@ def login_user( email:str, password:str, db:Session= Depends(get_db)):
     
     
     token_data= {
-        "id":user.id,
+        "user_id":user.id,
         "email":user.email,
         "role":user.role,
         "first_name":user.first_name,
@@ -98,3 +98,13 @@ def login_user( email:str, password:str, db:Session= Depends(get_db)):
         "status": status.HTTP_200_OK,
         "user":user
         }
+
+
+
+def get_user_by_id(user_id:int, db : Session =Depends(get_db)):
+    user= db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="User not found")
+   
+    return user

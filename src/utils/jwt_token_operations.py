@@ -17,9 +17,9 @@ ACCESS_TOKEN_EXPIRE_DAYS=1
 
 def create_access_token(data: dict):
     to_encode= data.copy()
-    expire= datetime.utcnow() + timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
+    expire = datetime.utcnow() + timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
     
-    to_encode.update({"expire":expire.strftime("%Y-%m-%d %H:%M:%S")})
+    to_encode.update({"expire": int (expire.timestamp())})
     
     encode_jwt= jwt.encode(to_encode,SECRET_KEY,ALGORITHM)
     
