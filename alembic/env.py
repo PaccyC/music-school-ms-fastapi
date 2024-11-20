@@ -5,7 +5,7 @@ from sqlalchemy import pool
 from sqlmodel import SQLModel
 from alembic import context
 from src.config import settings
-from src.auth.models import User
+from src.auth.models import User,Token,DataToken
 
 
 # this is the Alembic Config object, which provides

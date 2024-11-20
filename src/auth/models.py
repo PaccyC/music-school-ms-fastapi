@@ -2,7 +2,7 @@ from sqlmodel import Field, SQLModel
 from typing import Optional
 from enum import Enum
 from typing import ClassVar
-
+from pydantic import BaseModel
 # Define an Enum for the roles
 class RoleEnum(str, Enum):
     admin = "admin"
@@ -26,3 +26,12 @@ class User(UserBase, table=True):
 
 class UserCreate(UserBase):
     pass
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class DataToken(BaseModel):
+    id: Optional[str] = None
