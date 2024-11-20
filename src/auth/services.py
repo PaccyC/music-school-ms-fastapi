@@ -1,7 +1,12 @@
+from fastapi import Depends, HTTPException,status
 from sqlmodel import Session
-from src.auth.models import UserCreate,User
+from src.database import get_db
+from src.auth.models import UserCreate,User,Token
 import bcrypt
 
+from fastapi.security import OAuth2PasswordRequestForm
+
+from  src.utils import jwt_token_operations
 def register_user(db:Session, user_create: UserCreate):
     password = user_create.password
     email= user_create.email
@@ -41,9 +46,55 @@ def register_user(db:Session, user_create: UserCreate):
     db.commit()
     db.refresh(db_user)
     
+    # Generate the JWT TOKEN
+    
+    token_data= {
+        "id":db_user.id,
+        "email":db_user.email,
+        "role":db_user.role,
+        "first_name":db_user.first_name,
+        "last_name":db_user.last_name,
+    }
+    
+    jwt_token = jwt_token_operations.create_access_token(token_data)
+    
+    
     response= {
             "status":"True",
             "message": "User created successfully",
-            "user": db_user
+            "user": db_user,
+            "token": jwt_token
         }
     return  response
+
+
+def login_user( email:str, password:str, db:Session= Depends(get_db)):
+    user= db.query(User).filter(User.email == email).first()
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials")
+        
+    if not bcrypt.checkpw(password.encode("utf-8"),user.password.encode("utf-8")):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials")
+    
+    
+    token_data= {
+        "id":user.id,
+        "email":user.email,
+        "role":user.role,
+        "first_name":user.first_name,
+        "last_name":user.last_name,
+    }
+    access_token= jwt_token_operations.create_access_token(data=token_data)
+    
+    
+    return {
+        "access_token": access_token, 
+        "message":"User logged in successfully",
+        "status": status.HTTP_200_OK,
+        "user":user
+        }
